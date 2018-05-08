@@ -1,0 +1,44 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:divider="?android:attr/dividerHorizontal"
+    android:orientation="horizontal"
+    android:showDividers="middle">
+
+    <!--
+    This layout is a two-pane layout for the imageDetails
+    master/detail flow.
+    -->
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/articleBrowserSwipeRefreshLayout"
+        android:layout_width="@dimen/list_size"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/articleBrowserRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <FrameLayout
+        android:id="@+id/articleDetailContainer"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3" />
+
+    <TextView
+        android:id="@+id/articleBrowserEmptyTextView"
+        style="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/article_browser_empty"
+        android:textAlignment="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</LinearLayout>

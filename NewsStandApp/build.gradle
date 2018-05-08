@@ -20,6 +20,30 @@ allprojects {
         google()
         jcenter()
     }
+
+    //Android Support
+    project.ext["androidSupportVersion"] = "27.1.1"
+    project.ext["constraintLayoutVersion"] = "1.1.0"
+
+    //Third Party
+    project.ext["picassoVersion"] = "2.71828"
+    project.ext["retrofitVersion"] = "2.4.0"
+    project.ext["okhttp3Version"] = "3.10.0"
+    project.ext["moshiVersion"] = "1.5.0"
+    project.ext["daggerVersion"] = "2.15"
+
+    //Unit Tests
+    project.ext["junitVersion"] = "4.12"
+    project.ext["mockitoKotlinVersion"] = "1.5.0"
+    project.ext["robolectricVersion"] = "3.8"
+    project.ext["robolectricShadowsVersion"] = "3.4-rc2"
+
+    //Espresso Tests
+    project.ext["espressoVersion"] = "3.0.2"
+    project.ext["supportTestRunnerVersion"]="1.0.2"
+
+    //Lint
+    project.ext["lintIgnore"] = ["InvalidPackage", "ContentDescription"]
 }
 
 task clean(type: Delete) {

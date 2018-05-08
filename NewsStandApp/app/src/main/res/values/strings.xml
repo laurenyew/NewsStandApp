@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">NewsStandApp</string>
+    <string name="search">Search</string>
+    <string name="search_hint">Search for articles…</string>
+    <string name="article_browser_empty">No articles available.</string>
+    <string name="article_browser_refresh_menu_item">Refresh</string>
+    <string name="article_browser_no_internet">Internet not available. Please connect to internet and retry.</string>
+
+    <string name="article_title_unknown">Article Title Unknown</string>
+
+    <string name="article_browser_error_call_failed">Search Articles Call Failed.</string>
+    <string name="article_browser_error_call_failed_to_parse">Search Articles Call failed to parse. Please contact your developer.</string>
+    <string name="article_browser_error_message">" Message: %1$s"</string>
+    <string name="article_browser_exceeded_api_limit">You have exceeded the api call limit. Please wait and try again later.</string>
 </resources>
