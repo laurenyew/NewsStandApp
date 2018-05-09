@@ -20,6 +20,20 @@ android {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
+
+    //Allow Unit tests to see resources
+    //(used for fragment tests)
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
+    lintOptions {
+        project.ext["lintIgnore"].each { disable it }
+        abortOnError false
+        checkReleaseBuilds true
+    }
 }
 
 dependencies {

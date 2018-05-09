@@ -234,7 +234,7 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
         mIsLoadingData = false;
         if (isAdded() && isVisible()) {
             if (mAdapter == null) {
-                mAdapter = NewsStandApplication.getInstance().addFragmentComponent().getArticlePreviewAdapter();
+                mAdapter = new ArticlePreviewRecyclerViewAdapter(mPresenter);
                 mRecyclerView.setAdapter(mAdapter);
             }
             mAdapter.updateData(data);
@@ -288,8 +288,8 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
         if (isAdded() && isVisible()) {
             if (mIsRunningTwoPaneMode && mArticleDetailContainer != null) {
                 ArticleDetailContract.View detailView = ArticleDetailFragment.newInstance(itemImageUrl, itemTitle, itemDescription, itemWebUrl);
-                AppCompatActivity activity = (AppCompatActivity) getActivity();
-                FragmentManager supportFragmentManger = activity != null ? activity.getSupportFragmentManager() : null;
+                Activity activity = getActivity();
+                FragmentManager supportFragmentManger = activity != null && activity instanceof AppCompatActivity ? ((AppCompatActivity) activity).getSupportFragmentManager() : null;
                 if (supportFragmentManger != null) {
                     supportFragmentManger.beginTransaction()
                             .replace(R.id.articleDetailContainer, (Fragment) detailView)

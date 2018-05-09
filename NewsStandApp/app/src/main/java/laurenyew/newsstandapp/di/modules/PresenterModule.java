@@ -15,15 +15,23 @@ import laurenyew.newsstandapp.presenters.ArticleDetailPresenter;
  */
 @Module
 public class PresenterModule {
+    private ArticleBrowserContract.Presenter mBrowserPresenter;
+    private ArticleDetailContract.Presenter mDetailPresenter;
+
+    public PresenterModule(){
+        mBrowserPresenter = new ArticleBrowserPresenter();
+        mDetailPresenter = new ArticleDetailPresenter();
+    }
+
     @Provides
     @FragmentScope
     public ArticleBrowserContract.Presenter getArticleBrowserPresenter() {
-        return new ArticleBrowserPresenter();
+        return mBrowserPresenter;
     }
 
     @Provides
     @FragmentScope
     public ArticleDetailContract.Presenter getArticleDetailPresenter() {
-        return new ArticleDetailPresenter();
+        return mDetailPresenter;
     }
 }

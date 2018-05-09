@@ -1,11 +1,12 @@
 package laurenyew.newsstandapp;
 
 import android.app.Application;
+import android.support.annotation.VisibleForTesting;
 
-import laurenyew.newsstandapp.di.modules.AdapterModule;
 import laurenyew.newsstandapp.di.AppComponent;
 import laurenyew.newsstandapp.di.DaggerAppComponent;
 import laurenyew.newsstandapp.di.FragmentComponent;
+import laurenyew.newsstandapp.di.modules.AppModule;
 import laurenyew.newsstandapp.di.modules.NetworkModule;
 import laurenyew.newsstandapp.di.modules.PresenterModule;
 
@@ -30,7 +31,7 @@ public class NewsStandApplication extends Application {
 
     public FragmentComponent addFragmentComponent() {
         if (mFragmentComponent == null) {
-            mFragmentComponent = getAppComponent().plus(new PresenterModule(), new AdapterModule());
+            mFragmentComponent = getAppComponent().plus(new PresenterModule());
         }
         return mFragmentComponent;
     }
@@ -45,6 +46,24 @@ public class NewsStandApplication extends Application {
         mInstance = this;
         mAppComponent = DaggerAppComponent.builder()
                 .networkModule(new NetworkModule())
+                .appModule(new AppModule(getApplicationContext()))
                 .build();
     }
+
+    //region Test only methods
+    @VisibleForTesting
+    public void setInstance(NewsStandApplication testApplication) {
+        mInstance = testApplication;
+    }
+
+    @VisibleForTesting
+    public void setAppComponent(AppComponent testAppComponent) {
+        mAppComponent = testAppComponent;
+    }
+
+    @VisibleForTesting
+    public void setFragmentComponent(FragmentComponent testFragmentComponent) {
+        mFragmentComponent = testFragmentComponent;
+    }
+    //endregion
 }

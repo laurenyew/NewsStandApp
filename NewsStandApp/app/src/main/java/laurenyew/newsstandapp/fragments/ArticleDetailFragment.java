@@ -1,5 +1,6 @@
 package laurenyew.newsstandapp.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -101,8 +102,8 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
                     .into(mDetailImageView);
         }
 
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        ActionBar actionBar = activity != null ? activity.getSupportActionBar() : null;
+        Activity activity = getActivity();
+        ActionBar actionBar = activity != null && activity instanceof AppCompatActivity ? ((AppCompatActivity) activity).getSupportActionBar() : null;
         if (actionBar != null) {
             actionBar.setTitle(mItemTitle);
         }
