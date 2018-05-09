@@ -79,7 +79,6 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
     //Views
     private RecyclerView mRecyclerView = null;
     private SwipeRefreshLayout mSwipeRefreshLayout = null;
-    private LinearLayoutManager mLayoutManager = null;
     private TextView mEmptyTextView = null;
     private View mArticleDetailContainer = null;
 
@@ -111,31 +110,18 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
     @Override
     public void onViewCreated(final @NonNull View view, @Nullable Bundle savedInstanceState) {
         if (mRecyclerView != null) {
-            mLayoutManager = new LinearLayoutManager(getContext());
-            mRecyclerView.setLayoutManager(mLayoutManager);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
             mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int directionX, int directionY) {
-                    //Scrolling down
-                    if (mLayoutManager != null && directionY > 0) {
-                        int visibleItemCount = mLayoutManager.getChildCount();
-                        int totalItemCount = mLayoutManager.getItemCount();
-                        int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
-
-                        //Pre-Load more data
-                        //TODO: Infinite scroll with fast paging
-                        if (mPresenter != null && !mIsLoadingData && ((visibleItemCount + pastVisibleItems) >= (totalItemCount - visibleItemCount))) {
-                            mIsLoadingData = true;
-                            mPresenter.loadNextPageOfArticles();
-                        }
-                    }
-                }
-
                 @Override
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                     super.onScrollStateChanged(recyclerView, newState);
+                    //If you're at the bottom of the page, load more
+                    //TODO: Infinite scroll. Limited though by api call limit in NYTimes.
+                    if (mPresenter != null && !mIsLoadingData && !recyclerView.canScrollVertically(1)) {
+                        mIsLoadingData = true;
+                        mPresenter.loadNextPageOfArticles();
+                    }
                     //Hide the search keyboard if you start scrolling the list
                     if (newState == SCROLL_STATE_DRAGGING && !mSearchView.isIconified()) {
                         InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -178,7 +164,6 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
         mSearchMenuItem = null;
         mRecyclerView = null;
         mSwipeRefreshLayout = null;
-        mLayoutManager = null;
         mEmptyTextView = null;
         mArticleDetailContainer = null;
     }
