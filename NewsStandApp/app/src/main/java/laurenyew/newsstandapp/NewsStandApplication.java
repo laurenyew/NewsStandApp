@@ -2,10 +2,12 @@ package laurenyew.newsstandapp;
 
 import android.app.Application;
 
-import laurenyew.newsstandapp.di.AppModule;
-import laurenyew.newsstandapp.di.DaggerNewsStandAppComponent;
-import laurenyew.newsstandapp.di.NetworkModule;
-import laurenyew.newsstandapp.di.NewsStandAppComponent;
+import laurenyew.newsstandapp.di.modules.AdapterModule;
+import laurenyew.newsstandapp.di.AppComponent;
+import laurenyew.newsstandapp.di.DaggerAppComponent;
+import laurenyew.newsstandapp.di.FragmentComponent;
+import laurenyew.newsstandapp.di.modules.NetworkModule;
+import laurenyew.newsstandapp.di.modules.PresenterModule;
 
 /**
  * @author Lauren Yew on 5/8/18.
@@ -15,22 +17,34 @@ import laurenyew.newsstandapp.di.NewsStandAppComponent;
  */
 public class NewsStandApplication extends Application {
     private static NewsStandApplication mInstance = null;
-    protected NewsStandAppComponent mAppComponent = null;
+    private AppComponent mAppComponent = null;
+    private FragmentComponent mFragmentComponent = null;
 
     public static NewsStandApplication getInstance() {
         return mInstance;
     }
 
-    public NewsStandAppComponent getAppComponent() {
+    public AppComponent getAppComponent() {
         return mAppComponent;
+    }
+
+    public FragmentComponent addFragmentComponent() {
+        if (mFragmentComponent == null) {
+            mFragmentComponent = getAppComponent().plus(new PresenterModule(), new AdapterModule());
+        }
+        return mFragmentComponent;
+    }
+
+    public void releaseFragmentComponent() {
+        mFragmentComponent = null;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-        mAppComponent = DaggerNewsStandAppComponent.builder()
+        mAppComponent = DaggerAppComponent.builder()
                 .networkModule(new NetworkModule())
-                .appModule(new AppModule()).build();
+                .build();
     }
 }

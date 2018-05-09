@@ -4,23 +4,22 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import laurenyew.newsstandapp.api.NYTimesArticleApi;
-import laurenyew.newsstandapp.contracts.ArticleBrowserContract;
-import laurenyew.newsstandapp.contracts.ArticleDetailContract;
+import laurenyew.newsstandapp.di.modules.AdapterModule;
+import laurenyew.newsstandapp.di.modules.NetworkModule;
+import laurenyew.newsstandapp.di.modules.PresenterModule;
 
 /**
  * @author Lauren Yew on 5/8/18.
  * Dagger2 Component interface (Dagger2 inflates with appropriate singletons provided)
  */
 @Singleton
-@Component(modules = {NetworkModule.class, AppModule.class})
-public interface NewsStandAppComponent {
+@Component(modules = {NetworkModule.class})
+public interface AppComponent {
     //region Networking
     NYTimesArticleApi getNYTimesArticleApi();
     //endregion
 
-    //region Presenters
-    ArticleBrowserContract.Presenter getArticleBrowserPresenter();
-
-    ArticleDetailContract.Presenter getArticleDetailPresenter();
+    //region SubComponents
+    FragmentComponent plus(PresenterModule presenterModule, AdapterModule adapterModule);
     //endregion
 }

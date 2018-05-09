@@ -1,4 +1,4 @@
-package laurenyew.newsstandapp.di;
+package laurenyew.newsstandapp.di.modules;
 
 import com.squareup.moshi.Moshi;
 

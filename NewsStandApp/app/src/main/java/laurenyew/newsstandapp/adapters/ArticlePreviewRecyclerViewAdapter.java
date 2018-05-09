@@ -16,6 +16,9 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import laurenyew.newsstandapp.NewsStandApplication;
 import laurenyew.newsstandapp.R;
 import laurenyew.newsstandapp.adapters.data.ArticlePreviewDataWrapper;
 import laurenyew.newsstandapp.adapters.data.ArticlePreviewDiffCallback;
@@ -30,10 +33,11 @@ import laurenyew.newsstandapp.contracts.ArticleBrowserContract;
  * Uses pending queue that will pull the latest update to update itself and throw away other updates
  */
 public class ArticlePreviewRecyclerViewAdapter extends RecyclerView.Adapter<ArticlePreviewViewHolder> {
-    private ArticleBrowserContract.Presenter mPresenter;
+    @Inject
+    public ArticleBrowserContract.Presenter mPresenter;
 
-    public ArticlePreviewRecyclerViewAdapter(ArticleBrowserContract.Presenter presenter) {
-        mPresenter = presenter;
+    public ArticlePreviewRecyclerViewAdapter() {
+        NewsStandApplication.getInstance().addFragmentComponent().inject(this);
     }
 
     private ArrayList<ArticlePreviewDataWrapper> mData = new ArrayList<>();

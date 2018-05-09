@@ -1,11 +1,10 @@
-package laurenyew.newsstandapp.di;
-
-import javax.inject.Singleton;
+package laurenyew.newsstandapp.di.modules;
 
 import dagger.Module;
 import dagger.Provides;
 import laurenyew.newsstandapp.contracts.ArticleBrowserContract;
 import laurenyew.newsstandapp.contracts.ArticleDetailContract;
+import laurenyew.newsstandapp.di.scope.FragmentScope;
 import laurenyew.newsstandapp.presenters.ArticleBrowserPresenter;
 import laurenyew.newsstandapp.presenters.ArticleDetailPresenter;
 
@@ -15,18 +14,16 @@ import laurenyew.newsstandapp.presenters.ArticleDetailPresenter;
  * Provides Presenters and Adapter
  */
 @Module
-public class AppModule {
-    //region Presenters
+public class PresenterModule {
     @Provides
-    @Singleton
+    @FragmentScope
     public ArticleBrowserContract.Presenter getArticleBrowserPresenter() {
         return new ArticleBrowserPresenter();
     }
 
     @Provides
-    @Singleton
+    @FragmentScope
     public ArticleDetailContract.Presenter getArticleDetailPresenter() {
         return new ArticleDetailPresenter();
     }
-    //endregion
 }

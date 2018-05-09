@@ -26,6 +26,8 @@ News Article Browser (uses New York Times Article search)
 - [x] Master-Detail screen when in tablet landscape mode
 - [x] Detail screen with larger res image
 - [x] Detail screen with extra website button
+- [x] DiffUtil Performance enhancement for RecyclerView
+- [x] Dagger2 + MVP
 
 ## Notes:
 Using NYTimes "Article Search API"
@@ -37,4 +39,4 @@ https://developer.nytimes.com/article_search_v2.json#/Documentation/GET/articles
 * Okhttp3
 * Moshi
 * Dagger2 
-
+* Mockito

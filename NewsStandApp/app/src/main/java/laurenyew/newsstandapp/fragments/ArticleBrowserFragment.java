@@ -92,8 +92,9 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        //Dagger setup
+        mPresenter = NewsStandApplication.getInstance().addFragmentComponent().getArticleBrowserPresenter();
 
-        mPresenter = NewsStandApplication.getInstance().getAppComponent().getArticleBrowserPresenter();
     }
 
     @Nullable
@@ -172,6 +173,8 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
     public void onDestroy() {
         super.onDestroy();
         mPresenter = null;
+        //Release Fragment Component
+        NewsStandApplication.getInstance().releaseFragmentComponent();
     }
 
     @Override
@@ -231,7 +234,7 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
         mIsLoadingData = false;
         if (isAdded() && isVisible()) {
             if (mAdapter == null) {
-                mAdapter = new ArticlePreviewRecyclerViewAdapter(mPresenter);
+                mAdapter = NewsStandApplication.getInstance().addFragmentComponent().getArticlePreviewAdapter();
                 mRecyclerView.setAdapter(mAdapter);
             }
             mAdapter.updateData(data);

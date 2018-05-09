@@ -59,7 +59,7 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
     private String mItemDescription = null;
     private String mItemWebUrl = null;
 
-    protected ArticleDetailContract.Presenter mPresenter = null;
+    protected ArticleDetailContract.Presenter mPresenter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,7 +73,8 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
             mItemWebUrl = arguments.getString(ARG_ITEM_WEB_URL);
         }
 
-        mPresenter = NewsStandApplication.getInstance().getAppComponent().getArticleDetailPresenter();
+        //Dagger setup
+        mPresenter = NewsStandApplication.getInstance().addFragmentComponent().getArticleDetailPresenter();
     }
 
     @Nullable
@@ -155,6 +156,9 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
         mItemTitle = null;
         mItemDescription = null;
         mItemWebUrl = null;
+
+        //Release the component and the presenter
+        NewsStandApplication.getInstance().releaseFragmentComponent();
     }
 
     //region MVP
