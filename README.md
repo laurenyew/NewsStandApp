@@ -2,7 +2,7 @@
 News Article Browser (uses New York Times Article search)
 
 ### News Article Browser
-<img src="https://github.com/laurenyew/NewsStandApp/blob/develop/Screenshots/tablet_master_detail.png" alt="MasterDetailNewsBrowser" width="400" height="250"> <img src="https://github.com/laurenyew/NewsStandApp/blob/develop/Screenshots/search_article_browser.png" alt="NewsBrowserSearch" width="250" height="400">
+<img src="https://github.com/laurenyew/NewsStandApp/blob/develop/Screenshots/search_article_browser.png" alt="NewsBrowserSearch" width="250" height="400"> <img src="https://github.com/laurenyew/NewsStandApp/blob/develop/Screenshots/tablet_master_detail.png" alt="MasterDetailNewsBrowser" width="400" height="250">
 <img src="https://github.com/laurenyew/NewsStandApp/blob/develop/Screenshots/article_browser.png" alt="NewsBrowserBasic" width="250" height="400">
 <img src="https://github.com/laurenyew/NewsStandApp/blob/develop/Screenshots/article_detail.png" alt="NewsBrowserDetail" width="250" height="400">
 
