@@ -20,6 +20,8 @@ import retrofit2.Response;
 
 public class SearchArticlesCommand extends AsyncJobCommand {
     private static final String thumbNailSubtype = "thumbnail";
+    private static final String detailSubtype = "xlarge";
+
     private String mApiKey;
     private String mSearchTerm;
     private int mRequestedPageNum;
@@ -51,15 +53,16 @@ public class SearchArticlesCommand extends AsyncJobCommand {
                             if (response.code() != 200 || articleResponse == null) {
                                 //Post failure onto main thread
                                 Log.d(SearchArticlesCommand.class.toString(), "Response failure. Error code:" + response.code() + " error body: " + response.errorBody());
-                                if(response.code() == 429){
+                                if (response.code() == 429) {
                                     postFailure(SearchArticlesErrorCodes.SEARCH_API_RATE_EXCEEDED);
-                                }else {
+                                } else {
                                     postFailure(SearchArticlesErrorCodes.SEARCH_API_CALL_FAILED);
                                 }
                             } else {
                                 try {
                                     ArrayList<ArticleData> massagedData = new ArrayList<>();
-
+                                    boolean foundThumbnailImage;
+                                    boolean foundDetailImage;
                                     List<NYTimesArticleDataResponse> responseData = articleResponse.pageResponse.articleDataList;
                                     for (NYTimesArticleDataResponse data : responseData) {
                                         ArticleData article = new ArticleData();
@@ -68,9 +71,17 @@ public class SearchArticlesCommand extends AsyncJobCommand {
                                         article.description = data.snippet;
                                         article.webUrl = data.webUrl;
 
+                                        foundDetailImage = false;
+                                        foundThumbnailImage = false;
                                         for (NYTimesArticleMultiMediaResponse multiMediaResponse : data.multiMediaResponses) {
                                             if (thumbNailSubtype.equals(multiMediaResponse.subType)) {
                                                 article.thumbnailImageUrl = "http://www.nytimes.com/" + multiMediaResponse.imageUrl;
+                                                foundThumbnailImage = true;
+                                            } else if (detailSubtype.equals(multiMediaResponse.subType)) {
+                                                article.detailImageUrl = "http://www.nytimes.com/" + multiMediaResponse.imageUrl;
+                                                foundDetailImage = true;
+                                            }
+                                            if (foundThumbnailImage && foundDetailImage) {
                                                 break;
                                             }
                                         }

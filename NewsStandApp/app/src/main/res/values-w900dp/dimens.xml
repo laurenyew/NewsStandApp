@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="list_size">600dp</dimen>
+    <dimen name="list_size">550dp</dimen>
 </resources>

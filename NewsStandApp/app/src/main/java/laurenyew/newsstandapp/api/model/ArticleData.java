@@ -5,5 +5,6 @@ public class ArticleData {
     public String title;
     public String description;
     public String thumbnailImageUrl;
+    public String detailImageUrl;
     public String webUrl;
 }

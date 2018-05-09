@@ -17,6 +17,7 @@ News Article Browser (uses New York Times Article search)
 
 ## Extra Features:
 - [x] Master-Detail screen when in tablet landscape mode
+- [x] Detail screen with larger res image
 
 ## Notes:
 Using NYTimes "Article Search API"

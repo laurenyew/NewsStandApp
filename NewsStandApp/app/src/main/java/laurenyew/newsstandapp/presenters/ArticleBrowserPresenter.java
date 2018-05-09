@@ -117,7 +117,7 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
         ArticleBrowserContract.View view = getView();
         ArticleData data = mData.get(itemId);
         if (view != null && data != null) {
-            view.onShowArticleDetail(data.thumbnailImageUrl, data.title, data.description, data.webUrl);
+            view.onShowArticleDetail(data.detailImageUrl, data.title, data.description, data.webUrl);
         }
     }
 
@@ -136,9 +136,9 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
 
             //Add all the articles
             for (ArticleData article : data) {
-                //Don't allow empty titles
+                //Don't allow empty titles, either use description or default title
                 if (TextUtils.isEmpty(article.title)) {
-                    article.title = mDefaultTitle;
+                    article.title = TextUtils.isEmpty(article.description) ? article.description : mDefaultTitle;
                 }
                 //Fill in the data
                 mData.put(article.id, article);
