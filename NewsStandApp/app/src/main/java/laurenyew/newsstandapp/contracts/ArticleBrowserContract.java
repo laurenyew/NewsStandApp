@@ -1,5 +1,7 @@
 package laurenyew.newsstandapp.contracts;
 
+import android.support.annotation.NonNull;
+
 import java.util.List;
 
 import laurenyew.newsstandapp.adapters.data.ArticlePreviewDataWrapper;
@@ -17,7 +19,7 @@ public interface ArticleBrowserContract {
 
     interface Presenter {
 
-        void onBind(View view);
+        void onBind(@NonNull View view);
 
         void unBind();
 

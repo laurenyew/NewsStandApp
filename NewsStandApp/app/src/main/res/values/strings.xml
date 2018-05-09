@@ -6,6 +6,9 @@
     <string name="article_browser_refresh_menu_item">Refresh</string>
     <string name="article_browser_no_internet">Internet not available. Please connect to internet and retry.</string>
 
+    <string name="article_detail_share">Share</string>
+    <string name="article_detail_website">Website</string>
+
     <string name="article_title_unknown">Article Title Unknown</string>
 
     <string name="article_browser_error_call_failed">Search Articles Call Failed.</string>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="item_preview_image_size">100dp</dimen>
-    <dimen name="item_detail_size">400dp</dimen>
+    <dimen name="item_detail_size">500dp</dimen>
     <dimen name="text_margin">16dp</dimen>
 </resources>

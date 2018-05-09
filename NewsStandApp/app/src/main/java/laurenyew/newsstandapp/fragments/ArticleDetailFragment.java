@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ import com.squareup.picasso.Picasso;
 
 import laurenyew.newsstandapp.R;
 import laurenyew.newsstandapp.contracts.ArticleDetailContract;
+import laurenyew.newsstandapp.presenters.ArticleDetailPresenter;
 
 /**
  * Simple fragment to show the article details
@@ -43,11 +45,15 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
     private ImageView mDetailImageView = null;
     private TextView mDetailTitleTextView = null;
     private TextView mDetailDescriptionTextView = null;
+    private Button mShareButton = null;
+    private Button mWebsiteButton = null;
 
     private String mItemImageUrl = null;
     private String mItemTitle = null;
     private String mItemDescription = null;
     private String mItemWebUrl = null;
+
+    private ArticleDetailContract.Presenter mPresenter = null;
 
 
     @Override
@@ -61,6 +67,8 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
             mItemDescription = arguments.getString(ARG_ITEM_DESCRIPTION);
             mItemWebUrl = arguments.getString(ARG_ITEM_WEB_URL);
         }
+
+        mPresenter = new ArticleDetailPresenter();
     }
 
     @Nullable
@@ -70,6 +78,8 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
         mDetailImageView = rootView.findViewById(R.id.detailImageView);
         mDetailTitleTextView = rootView.findViewById(R.id.detailTitleTextView);
         mDetailDescriptionTextView = rootView.findViewById(R.id.detailDescriptionTextView);
+        mShareButton = rootView.findViewById(R.id.openShareButton);
+        mWebsiteButton = rootView.findViewById(R.id.openWebsiteButton);
         return rootView;
     }
 
@@ -98,5 +108,55 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
         if (mDetailDescriptionTextView != null) {
             mDetailDescriptionTextView.setText(mItemDescription);
         }
+
+        if (mShareButton != null) {
+            mShareButton.setOnClickListener(shareView -> {
+                if (mPresenter != null) {
+                    mPresenter.onShare();
+                }
+            });
+        }
+
+        if (mWebsiteButton != null && mWebsiteButton.getVisibility() == View.VISIBLE) {
+            mWebsiteButton.setOnClickListener(websiteView -> {
+                if (mPresenter != null) {
+                    mPresenter.onOpenWebsite();
+                }
+            });
+        }
+
+        mPresenter.onBind(this, mItemTitle, mItemDescription, mItemWebUrl);
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mPresenter.unBind();
+
+        mDetailImageView = null;
+        mDetailTitleTextView = null;
+        mDetailDescriptionTextView = null;
+        mShareButton = null;
+        mWebsiteButton = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter = null;
+        mItemImageUrl = null;
+        mItemTitle = null;
+        mItemDescription = null;
+        mItemWebUrl = null;
+    }
+
+    //region MVP
+    @Override
+    public void onHideOpenWebsiteButton() {
+        if (mWebsiteButton != null) {
+            mWebsiteButton.setVisibility(View.GONE);
+        }
+    }
+    //endregion
 }

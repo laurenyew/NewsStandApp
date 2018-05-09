@@ -10,14 +10,16 @@ News Article Browser (uses New York Times Article search)
 - [x] Selecting an item should open a detail screen
 - [x] Paging results when scroll to bottom
 - [x] Detail displays article detail
-- [ ] Detail contains share option to send link via social media or email
+- [x] Detail contains share option to send link via social media or email
 - [x] Error Handling: Internet not available
 - [x] Error Handling: Request failed
 - [ ] Unit tests
 
 ## Extra Features:
+- [x] MVP Architecture
 - [x] Master-Detail screen when in tablet landscape mode
 - [x] Detail screen with larger res image
+- [x] Detail screen with extra website button
 
 ## Notes:
 Using NYTimes "Article Search API"
