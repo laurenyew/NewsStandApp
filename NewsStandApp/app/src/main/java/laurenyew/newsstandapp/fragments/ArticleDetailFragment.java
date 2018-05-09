@@ -12,17 +12,23 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import laurenyew.newsstandapp.NewsStandApplication;
 import laurenyew.newsstandapp.R;
 import laurenyew.newsstandapp.contracts.ArticleDetailContract;
-import laurenyew.newsstandapp.presenters.ArticleDetailPresenter;
 
 /**
- * Simple fragment to show the article details
+ * @author Lauren Yew on 5/8/18.
+ * Simple fragment to show the article details.
+ * Added Presenter so that its easier to switch out logic for handling onSearch / onWebsite buttons
  */
 public class ArticleDetailFragment extends Fragment implements ArticleDetailContract.View {
+    /**
+     * Helper method to create an ArticleDetailFragment with the proper arguments
+     */
     public static ArticleDetailFragment newInstance(String itemImageUrl, String itemTitle, String itemDescription, String itemWebUrl) {
         ArticleDetailFragment fragment = new ArticleDetailFragment();
         Bundle args = new Bundle();
@@ -53,8 +59,7 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
     private String mItemDescription = null;
     private String mItemWebUrl = null;
 
-    private ArticleDetailContract.Presenter mPresenter = null;
-
+    protected ArticleDetailContract.Presenter mPresenter = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,7 +73,7 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
             mItemWebUrl = arguments.getString(ARG_ITEM_WEB_URL);
         }
 
-        mPresenter = new ArticleDetailPresenter();
+        mPresenter = NewsStandApplication.getInstance().getAppComponent().getArticleDetailPresenter();
     }
 
     @Nullable
@@ -125,6 +130,7 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
             });
         }
 
+        //Bind the presenter so it can handle onShare and onOpenWebsite
         mPresenter.onBind(this, mItemTitle, mItemDescription, mItemWebUrl);
     }
 
@@ -152,10 +158,14 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
     }
 
     //region MVP
+
+    /**
+     * Show a toast when you fail to open a given website
+     */
     @Override
-    public void onHideOpenWebsiteButton() {
-        if (mWebsiteButton != null) {
-            mWebsiteButton.setVisibility(View.GONE);
+    public void onOpenWebsiteFailed() {
+        if (isAdded() && isVisible()) {
+            Toast.makeText(getContext(), R.string.article_detail_unable_to_open_website, Toast.LENGTH_SHORT).show();
         }
     }
     //endregion

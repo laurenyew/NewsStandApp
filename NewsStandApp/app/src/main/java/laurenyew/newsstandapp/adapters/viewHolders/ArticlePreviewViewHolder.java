@@ -7,6 +7,12 @@ import android.widget.TextView;
 
 import laurenyew.newsstandapp.R;
 
+/**
+ * @author Lauren Yew on 5/8/18.
+ * Custom View Holder for Article Preview
+ * <p>
+ * NOTE: Not using the `member notation` for easy access to variables
+ */
 public class ArticlePreviewViewHolder extends RecyclerView.ViewHolder {
     public ImageView previewImageView;
     public TextView previewTitleTextView;

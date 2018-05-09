@@ -16,23 +16,28 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
+/**
+ * @author Lauren Yew on 5/8/18.
+ * Dagger2 Module Implementation
+ * Provides Retrofit and NYTimesArticleApi singletons
+ */
 @Module
 public class NetworkModule {
-    private Retrofit retrofit;
-    private Moshi moshi = new Moshi.Builder().build();
-    private OkHttpClient.Builder okHttpClient;
+    private Retrofit mRetrofit;
+    private Moshi mMoshi = new Moshi.Builder().build();
+    private OkHttpClient.Builder mOkHttpClient;
 
     public NetworkModule() {
-        okHttpClient = setupOkHttp();
-        retrofit = new Retrofit.Builder().baseUrl("https://api.nytimes.com/")
-                .addConverterFactory(MoshiConverterFactory.create(moshi))
-                .client(okHttpClient.build()).build();
+        mOkHttpClient = setupOkHttp();
+        mRetrofit = new Retrofit.Builder().baseUrl("https://api.nytimes.com/")
+                .addConverterFactory(MoshiConverterFactory.create(mMoshi))
+                .client(mOkHttpClient.build()).build();
     }
 
     @Provides
     @Singleton
     public Retrofit getRetrofit() {
-        return retrofit;
+        return mRetrofit;
     }
 
     @Provides

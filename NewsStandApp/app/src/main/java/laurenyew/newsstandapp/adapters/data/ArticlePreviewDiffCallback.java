@@ -4,6 +4,13 @@ import android.support.v7.util.DiffUtil;
 
 import java.util.List;
 
+/**
+ * @author Lauren Yew on 5/8/18.
+ * DiffUtil.Callback for dealing with Article Preview data
+ * (RecyclerView.Adapter performance enhancement)
+ * <p>
+ * This takes O(n) time, so the execution is run on a background thread
+ */
 public class ArticlePreviewDiffCallback extends DiffUtil.Callback {
     private List<ArticlePreviewDataWrapper> mOldData;
     private List<ArticlePreviewDataWrapper> mNewData;

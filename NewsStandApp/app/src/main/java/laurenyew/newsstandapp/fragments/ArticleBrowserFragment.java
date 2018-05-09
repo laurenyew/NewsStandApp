@@ -11,6 +11,7 @@ import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,16 +31,27 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import laurenyew.newsstandapp.NewsStandApplication;
 import laurenyew.newsstandapp.R;
 import laurenyew.newsstandapp.activities.ArticleDetailActivity;
 import laurenyew.newsstandapp.adapters.ArticlePreviewRecyclerViewAdapter;
 import laurenyew.newsstandapp.adapters.data.ArticlePreviewDataWrapper;
 import laurenyew.newsstandapp.contracts.ArticleBrowserContract;
 import laurenyew.newsstandapp.contracts.ArticleDetailContract;
-import laurenyew.newsstandapp.presenters.ArticleBrowserPresenter;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 
+/**
+ * @author Lauren Yew on 5/8/18.
+ * <p>
+ * Main view logic for Article Browser
+ * <p>
+ * Features:
+ * - RecyclerView
+ * - Master Detail Fragment View
+ * - Swipe Refresh Layout
+ * - Search View
+ */
 public class ArticleBrowserFragment extends Fragment implements ArticleBrowserContract.View, SwipeRefreshLayout.OnRefreshListener {
     public static long DEFAULT_SEARCH_DELAY = 500L; //Wait for .5 secs (avg user typing time is .3-1 sec per character)
 
@@ -56,12 +68,15 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
     boolean mIsRunningTwoPaneMode = false;
     @VisibleForTesting
     boolean mShouldShowFirstItem = true;
+    //don't allow more than one load call at once. Hitting NYTimes api call limit
+    //so have this here to help try to mitigate
     @VisibleForTesting
     boolean mIsLoadingData = false;
     private String mSearchTerm = null;
 
     private MenuItem mSearchMenuItem = null;
 
+    //Views
     private RecyclerView mRecyclerView = null;
     private SwipeRefreshLayout mSwipeRefreshLayout = null;
     private LinearLayoutManager mLayoutManager = null;
@@ -72,14 +87,14 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
     private Timer mSearchQueryKeyEntryTimer = null;
 
     private ArticlePreviewRecyclerViewAdapter mAdapter = null;
-    private ArticleBrowserContract.Presenter mPresenter = null;
+    protected ArticleBrowserContract.Presenter mPresenter = null;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mPresenter = new ArticleBrowserPresenter();
+        mPresenter = NewsStandApplication.getInstance().getAppComponent().getArticleBrowserPresenter();
     }
 
     @Nullable
@@ -109,7 +124,8 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
                         int totalItemCount = mLayoutManager.getItemCount();
                         int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
 
-                        //Load more data infinite scroll
+                        //Pre-Load more data
+                        //TODO: Infinite scroll with fast paging
                         if (mPresenter != null && !mIsLoadingData && ((visibleItemCount + pastVisibleItems) >= (totalItemCount - visibleItemCount))) {
                             mIsLoadingData = true;
                             mPresenter.loadNextPageOfArticles();
@@ -120,8 +136,8 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
                 @Override
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                     super.onScrollStateChanged(recyclerView, newState);
+                    //Hide the search keyboard if you start scrolling the list
                     if (newState == SCROLL_STATE_DRAGGING && !mSearchView.isIconified()) {
-                        //Hide Keyboard
                         InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
@@ -140,6 +156,7 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
             mIsRunningTwoPaneMode = true;
         }
 
+        //Start loading the data
         if (mPresenter != null) {
             mPresenter.onBind(this);
         }
@@ -177,6 +194,7 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
         inflater.inflate(R.menu.article_browser_menu, menu);
         mSearchMenuItem = menu.findItem(R.id.menu_search);
 
+        //Setup Search View
         View menuView = mSearchMenuItem.getActionView();
         if (menuView != null && menuView instanceof SearchView) {
             mSearchView = (SearchView) menuView;
@@ -186,7 +204,11 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
             if (searchManager != null) {
                 mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
             }
+
+            //Customizable query text listener
             mSearchView.setOnQueryTextListener(getQueryTextListener());
+
+            //Setup hide / show search view
             mSearchView.setOnQueryTextFocusChangeListener((view, hasFocus) -> {
                 if (hasFocus) {
                     if (mSearchMenuItem != null) {
@@ -217,7 +239,7 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
     //region MVP
 
     /**
-     * Load the images into the view
+     * Load the articles into the view
      */
     @Override
     public void onArticlesLoaded(List<ArticlePreviewDataWrapper> data) {
@@ -234,6 +256,9 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
                 mEmptyTextView.setVisibility(View.VISIBLE);
             } else {
                 mEmptyTextView.setVisibility(View.GONE);
+
+                //If we are in two pane mode and we have just opened the browser,
+                //load the first detail
                 if (mShouldShowFirstItem && mPresenter != null) {
                     //if this view has just been refreshed, we should
                     //show the first item
@@ -245,6 +270,9 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
         }
     }
 
+    /**
+     * Show a toast message on why the articles failed to load
+     */
     @Override
     public void onArticlesFailedToLoad(String message) {
         if (isAdded() && isVisible()) {
@@ -252,13 +280,15 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
         }
     }
 
+    /**
+     * Show the internet not available message
+     */
     @Override
     public void onInternetNotAvailable() {
         if (isAdded() && isVisible()) {
             Toast.makeText(getContext(), R.string.article_browser_no_internet, Toast.LENGTH_SHORT).show();
         }
     }
-
 
     /**
      * Depending on if we're running in two pane mode (Tablet in landscape or really large screen),
@@ -270,7 +300,8 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
         if (isAdded() && isVisible()) {
             if (mIsRunningTwoPaneMode && mArticleDetailContainer != null) {
                 ArticleDetailContract.View detailView = ArticleDetailFragment.newInstance(itemImageUrl, itemTitle, itemDescription, itemWebUrl);
-                FragmentManager supportFragmentManger = getActivity().getSupportFragmentManager();
+                AppCompatActivity activity = (AppCompatActivity) getActivity();
+                FragmentManager supportFragmentManger = activity != null ? activity.getSupportFragmentManager() : null;
                 if (supportFragmentManger != null) {
                     supportFragmentManger.beginTransaction()
                             .replace(R.id.articleDetailContainer, (Fragment) detailView)
@@ -289,6 +320,9 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
 
     //region SwipeRefreshLayout
 
+    /**
+     * SwipeRefreshLayout callback when refreshing
+     */
     @Override
     public void onRefresh() {
         mIsLoadingData = true;
@@ -302,7 +336,11 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
     //region Helper Methods
 
     /**
-     * Available to override if the don't like the query behavior
+     * Available to override if you don't like the query behavior
+     * Default behavior is to have a timer that will go off when the user stops
+     * typing and then perform the search. This way search is quick and dynamic and
+     * user doesn't have to press enter to search, but the search won't be happening
+     * as the user is typing.
      */
     public SearchView.OnQueryTextListener getQueryTextListener() {
         return new SearchView.OnQueryTextListener() {

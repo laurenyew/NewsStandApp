@@ -6,11 +6,15 @@ import java.util.List;
 
 import laurenyew.newsstandapp.adapters.data.ArticlePreviewDataWrapper;
 
+/**
+ * @author Lauren Yew on 5/8/18.
+ * MVP Contract for Article Browser Feature
+ */
 public interface ArticleBrowserContract {
     interface View {
         void onArticlesLoaded(List<ArticlePreviewDataWrapper> data);
 
-        void onArticlesFailedToLoad(String message);
+        void onArticlesFailedToLoad(@NonNull String message);
 
         void onInternetNotAvailable();
 
@@ -36,6 +40,6 @@ public interface ArticleBrowserContract {
         /**
          * Preview is selected (from the adapter)
          */
-        void onSelectPreview(String itemId);
+        void onSelectPreview(@NonNull String itemId);
     }
 }

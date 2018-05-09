@@ -10,11 +10,24 @@ import java.lang.ref.WeakReference;
 import laurenyew.newsstandapp.NewsStandApplication;
 import laurenyew.newsstandapp.contracts.ArticleDetailContract;
 
+/**
+ * @author Lauren Yew on 5/8/18.
+ * <p>
+ * Article Detail Feature Logic
+ * - Share Detail
+ * - Open Detail Website
+ */
 public class ArticleDetailPresenter implements ArticleDetailContract.Presenter {
     private WeakReference<ArticleDetailContract.View> mViewRef = null;
     private String mTitle = null;
     private String mDescription = null;
     private String mWebUrl = null;
+
+    //region Getters
+    private ArticleDetailContract.View getView() {
+        return mViewRef != null ? mViewRef.get() : null;
+    }
+    //endregion
 
     @Override
     public void onBind(ArticleDetailContract.View view, String title, String description, String webUrl) {
@@ -22,10 +35,6 @@ public class ArticleDetailPresenter implements ArticleDetailContract.Presenter {
         mTitle = title;
         mDescription = description;
         mWebUrl = webUrl;
-
-        if (view != null && TextUtils.isEmpty(mWebUrl)) {
-            view.onHideOpenWebsiteButton();
-        }
     }
 
     @Override
@@ -39,6 +48,11 @@ public class ArticleDetailPresenter implements ArticleDetailContract.Presenter {
         mWebUrl = null;
     }
 
+    /**
+     * Launch an intent to open a chooser
+     * for a share intent
+     * (Email, Message, Social Media)
+     */
     @Override
     public void onShare() {
         Context context = NewsStandApplication.getInstance().getApplicationContext();
@@ -63,6 +77,10 @@ public class ArticleDetailPresenter implements ArticleDetailContract.Presenter {
         }
     }
 
+    /**
+     * Attempt to launch an intent to open the web url
+     * If there is an exception, tell the view
+     */
     @Override
     public void onOpenWebsite() {
         Context context = NewsStandApplication.getInstance().getApplicationContext();
@@ -73,7 +91,10 @@ public class ArticleDetailPresenter implements ArticleDetailContract.Presenter {
                 i.setData(uri);
                 context.startActivity(i);
             } catch (Exception e) {
-                //Do nothing for a bad web url
+                ArticleDetailContract.View view = getView();
+                if (view != null) {
+                    view.onOpenWebsiteFailed();
+                }
             }
         }
     }

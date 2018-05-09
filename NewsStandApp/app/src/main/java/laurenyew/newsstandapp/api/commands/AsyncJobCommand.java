@@ -3,7 +3,7 @@ package laurenyew.newsstandapp.api.commands;
 import android.support.annotation.VisibleForTesting;
 
 /**
- * @author Lauren Yew on 05/07/2018.
+ * @author Lauren Yew on 5/8/18.
  * <p>
  * Base abstract class to run commands
  * <p>

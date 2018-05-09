@@ -15,4 +15,6 @@
     <string name="article_browser_error_call_failed_to_parse">Search Articles Call failed to parse. Please contact your developer.</string>
     <string name="article_browser_error_message">" Message: %1$s"</string>
     <string name="article_browser_exceeded_api_limit">You have exceeded the api call limit. Please wait and try again later.</string>
+
+    <string name="article_detail_unable_to_open_website">Unable to open article website.</string>
 </resources>

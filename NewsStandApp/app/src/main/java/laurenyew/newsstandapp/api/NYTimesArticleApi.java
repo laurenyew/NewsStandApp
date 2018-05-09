@@ -5,6 +5,10 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
+/**
+ * @author Lauren Yew on 5/8/18.
+ * Retrofit api for NYTimes Article Search
+ */
 public interface NYTimesArticleApi {
     @GET("svc/search/v2/articlesearch.json")
     Call<NYTimesArticleResponse> searchArticles(

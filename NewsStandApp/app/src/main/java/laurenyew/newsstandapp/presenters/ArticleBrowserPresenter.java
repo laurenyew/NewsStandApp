@@ -25,6 +25,13 @@ import static laurenyew.newsstandapp.api.commands.SearchArticlesErrorCodes.EXCEP
 import static laurenyew.newsstandapp.api.commands.SearchArticlesErrorCodes.SEARCH_API_CALL_FAILED;
 import static laurenyew.newsstandapp.api.commands.SearchArticlesErrorCodes.SEARCH_API_RATE_EXCEEDED;
 
+/**
+ * @author Lauren Yew on 5/8/18.
+ * <p>
+ * ArticleBrowser Feature Logic
+ * - Controls paging and keeping track of data
+ * - Controls the commands that are made
+ */
 public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter {
 
     private WeakReference<ArticleBrowserContract.View> mViewRef = null;
@@ -32,14 +39,14 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
     HashMap<String, ArticleData> mData = new HashMap<>();
     private ArrayList<ArticlePreviewDataWrapper> mPreviewData = new ArrayList<>();
     private String mApiKey = null;
-    private String mDefaultTitle = null;
+    private String mDefaultTitle = null; //Don't want to have an empty title
     private AsyncJobCommand mCommand = null;
     private int mCurrentPageNum = 0;
     private String mSearchTerm = null;
 
+    //Passing Lambdas (Java 8 function)
     private BiFunction<List<ArticleData>, Integer, Object> onSuccessFunction = (data, pageNum) -> onLoadArticlesSuccess(data, pageNum);
     private BiFunction<Integer, String, Object> onFailureFunction = (errorCode, message) -> onLoadArticlesFailure(errorCode, message);
-
 
     //region Getters
     private ArticleBrowserContract.View getView() {
@@ -73,6 +80,9 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
         mDefaultTitle = null;
     }
 
+    /**
+     * Need to refresh the data and clear the pages
+     */
     @Override
     public void refreshArticles(String searchTerm) {
         //Only let 1 command run at a time
@@ -80,12 +90,13 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
             mCommand.cancel();
         }
 
+        //Before making any new commands, check if network is available
         if (checkIfInternetIsAvailable()) {
             //reset the current page
             mCurrentPageNum = 0;
             mSearchTerm = searchTerm != null ? searchTerm : "";
 
-            //load the images async
+            //load the articles async
             if (mApiKey != null) {
                 mCommand = new SearchArticlesCommand(mApiKey, mSearchTerm, mCurrentPageNum,
                         onSuccessFunction, onFailureFunction);
@@ -94,6 +105,10 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
         }
     }
 
+    /**
+     * Paging method to load the next page
+     * TODO: Consider a floating cache. This paging data can get really large.
+     */
     @Override
     public void loadNextPageOfArticles() {
         //Only let 1 command run at a time
@@ -101,6 +116,7 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
             mCommand.cancel();
         }
 
+        //Before making any new commands, check if network is available
         if (checkIfInternetIsAvailable()) {
             int nextPageNum = mCurrentPageNum + 1;
             //load the images async for next page
@@ -112,6 +128,9 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
         }
     }
 
+    /**
+     * Open the detail view. Find the associated data via the itemId
+     */
     @Override
     public void onSelectPreview(String itemId) {
         ArticleBrowserContract.View view = getView();
@@ -122,6 +141,15 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
     }
 
     //region Command Callback Methods
+
+    /**
+     * On Success Lambda callback
+     * <p>
+     * Parse the data model into POJOs for the list to use
+     * Save the data itself so we can look it up later for viewing details
+     * TODO: Might consider making the articleData into POJOs for space reasons, or integrating ROOM instead
+     * of keeping the data cached here
+     */
     protected Object onLoadArticlesSuccess(List<ArticleData> data, Integer requestedPage) {
         ArticleBrowserContract.View view = getView();
         if (view != null) {
@@ -151,6 +179,11 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
         return null;
     }
 
+    /**
+     * OnFailure callback
+     * Parse the error code and decide which message to update the view with
+     * Add the extra message if we're in debug mode
+     */
     protected Object onLoadArticlesFailure(int errorCode, String message) {
         ArticleBrowserContract.View view = getView();
         Context context = NewsStandApplication.getInstance().getApplicationContext();
@@ -215,7 +248,10 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
         return isInternetConnected;
     }
 
-    //https://stackoverflow.com/questions/9570237/android-check-internet-connection
+    /**
+     * Check if Network is available:
+     * https://stackoverflow.com/questions/9570237/android-check-internet-connection
+     */
     private boolean isNetworkAvailable(Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();

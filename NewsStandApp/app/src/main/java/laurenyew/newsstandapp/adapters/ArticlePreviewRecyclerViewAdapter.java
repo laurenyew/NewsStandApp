@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,20 +22,28 @@ import laurenyew.newsstandapp.adapters.data.ArticlePreviewDiffCallback;
 import laurenyew.newsstandapp.adapters.viewHolders.ArticlePreviewViewHolder;
 import laurenyew.newsstandapp.contracts.ArticleBrowserContract;
 
+/**
+ * @author Lauren Yew on 5/8/18.
+ * RecyclerView.Adapter
+ * <p>
+ * Includes logic to update the data w/ diff util in background thread
+ * Uses pending queue that will pull the latest update to update itself and throw away other updates
+ */
 public class ArticlePreviewRecyclerViewAdapter extends RecyclerView.Adapter<ArticlePreviewViewHolder> {
     private ArticleBrowserContract.Presenter mPresenter;
-    private ArrayList<ArticlePreviewDataWrapper> mData = new ArrayList<>();
-
-    @VisibleForTesting
-    public ArrayDeque<List<ArticlePreviewDataWrapper>> pendingDataUpdates = new ArrayDeque<>();
 
     public ArticlePreviewRecyclerViewAdapter(ArticleBrowserContract.Presenter presenter) {
         mPresenter = presenter;
     }
 
+    private ArrayList<ArticlePreviewDataWrapper> mData = new ArrayList<>();
+
+    @VisibleForTesting
+    public ArrayDeque<List<ArticlePreviewDataWrapper>> pendingDataUpdates = new ArrayDeque<>();
+
     //RecyclerView Diff.Util (List Updates)
     public void updateData(List<ArticlePreviewDataWrapper> newData) {
-        List<ArticlePreviewDataWrapper> data = newData != null ? newData : new ArrayList<ArticlePreviewDataWrapper>();
+        List<ArticlePreviewDataWrapper> data = newData != null ? newData : new ArrayList<>();
         pendingDataUpdates.add(data);
         if (pendingDataUpdates.size() <= 1) {
             updateDataInternal(data);

@@ -3,7 +3,6 @@ package laurenyew.newsstandapp.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,7 +12,16 @@ import laurenyew.newsstandapp.R;
 import laurenyew.newsstandapp.contracts.ArticleDetailContract;
 import laurenyew.newsstandapp.fragments.ArticleDetailFragment;
 
+/**
+ * @author Lauren Yew on 5/8/18.
+ * Article Detail Activity
+ * If this is a tablet view, two pane view will show the fragment only; otherwise,
+ * this activity will be shown when selecting a article preview
+ */
 public class ArticleDetailActivity extends AppCompatActivity {
+    /**
+     * Helper method to create new activity with the appropriate values
+     */
     public static Intent newInstance(Context context, String itemImageUrl, String itemTitle, String itemDescription, String itemWebUrl) {
         Intent intent = new Intent(context, ArticleDetailActivity.class);
         if (itemImageUrl != null) {
@@ -39,8 +47,10 @@ public class ArticleDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ActionBar supportActionBar = getSupportActionBar();
-        // Show the Up button in the action bar.
-        supportActionBar.setDisplayHomeAsUpEnabled(true);
+        if (supportActionBar != null) {
+            // Show the Up button in the action bar.
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         if (savedInstanceState == null) {
             Intent intent = getIntent();
@@ -50,7 +60,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
             String itemWebUrl = intent.getStringExtra(ArticleDetailContract.View.ARG_ITEM_WEB_URL);
             ArticleDetailFragment fragment = ArticleDetailFragment.newInstance(imageUrl, itemTitle, itemDescription, itemWebUrl);
 
-            if (fragment instanceof Fragment) {
+            if (fragment != null) {
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.articleDetailContainer, fragment)
                         .commit();
