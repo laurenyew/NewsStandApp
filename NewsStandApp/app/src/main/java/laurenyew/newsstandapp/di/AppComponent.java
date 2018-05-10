@@ -1,11 +1,14 @@
 package laurenyew.newsstandapp.di;
 
+import android.content.Context;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
 import laurenyew.newsstandapp.api.NYTimesArticleApi;
-import laurenyew.newsstandapp.contracts.ArticleBrowserContract;
-import laurenyew.newsstandapp.contracts.ArticleDetailContract;
+import laurenyew.newsstandapp.di.modules.AppModule;
+import laurenyew.newsstandapp.di.modules.NetworkModule;
+import laurenyew.newsstandapp.di.modules.PresenterModule;
 
 /**
  * @author Lauren Yew on 5/8/18.
@@ -13,14 +16,16 @@ import laurenyew.newsstandapp.contracts.ArticleDetailContract;
  */
 @Singleton
 @Component(modules = {NetworkModule.class, AppModule.class})
-public interface NewsStandAppComponent {
+public interface AppComponent {
+    //region Context
+    Context getContext();
+
+    //endregion
     //region Networking
     NYTimesArticleApi getNYTimesArticleApi();
     //endregion
 
-    //region Presenters
-    ArticleBrowserContract.Presenter getArticleBrowserPresenter();
-
-    ArticleDetailContract.Presenter getArticleDetailPresenter();
+    //region SubComponents
+    FragmentComponent plus(PresenterModule presenterModule);
     //endregion
 }

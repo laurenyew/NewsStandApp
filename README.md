@@ -19,13 +19,15 @@ News Article Browser (uses New York Times Article search)
 - [x] Detail contains share option to send link via social media or email
 - [x] Error Handling: Internet not available
 - [x] Error Handling: Request failed
-- [ ] Unit tests
+- [x] Unit tests
 
 ## Extra Features:
 - [x] MVP Architecture
 - [x] Master-Detail screen when in tablet landscape mode
 - [x] Detail screen with larger res image
 - [x] Detail screen with extra website button
+- [x] DiffUtil Performance enhancement for RecyclerView
+- [x] Dagger2 + MVP
 
 ## Notes:
 Using NYTimes "Article Search API"
@@ -37,4 +39,9 @@ https://developer.nytimes.com/article_search_v2.json#/Documentation/GET/articles
 * Okhttp3
 * Moshi
 * Dagger2 
+* Mockito
 
+## Future Enhancements
+* Room + LiveData Integration (don't let data disappear when rotate)
+* Don't exceed api calls
+* Better handling for image not available

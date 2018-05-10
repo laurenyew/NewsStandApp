@@ -27,8 +27,10 @@ import retrofit2.Response;
  * into our own data model class
  */
 public class SearchArticlesCommand extends AsyncJobCommand {
-    private static final String thumbNailSubtype = "thumbnail";
-    private static final String detailSubtype = "xlarge";
+    @VisibleForTesting
+    public static final String thumbNailSubtype = "thumbnail";
+    @VisibleForTesting
+    public static final String detailSubtype = "xlarge";
 
     private String mApiKey;
     private String mSearchTerm;

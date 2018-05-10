@@ -1,5 +1,6 @@
 package laurenyew.newsstandapp.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -59,7 +60,7 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
     private String mItemDescription = null;
     private String mItemWebUrl = null;
 
-    protected ArticleDetailContract.Presenter mPresenter = null;
+    protected ArticleDetailContract.Presenter mPresenter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,7 +74,8 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
             mItemWebUrl = arguments.getString(ARG_ITEM_WEB_URL);
         }
 
-        mPresenter = NewsStandApplication.getInstance().getAppComponent().getArticleDetailPresenter();
+        //Dagger setup
+        mPresenter = NewsStandApplication.getInstance().addFragmentComponent().getArticleDetailPresenter();
     }
 
     @Nullable
@@ -100,8 +102,8 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
                     .into(mDetailImageView);
         }
 
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        ActionBar actionBar = activity != null ? activity.getSupportActionBar() : null;
+        Activity activity = getActivity();
+        ActionBar actionBar = activity != null && activity instanceof AppCompatActivity ? ((AppCompatActivity) activity).getSupportActionBar() : null;
         if (actionBar != null) {
             actionBar.setTitle(mItemTitle);
         }
@@ -155,6 +157,9 @@ public class ArticleDetailFragment extends Fragment implements ArticleDetailCont
         mItemTitle = null;
         mItemDescription = null;
         mItemWebUrl = null;
+
+        //Release the component and the presenter
+        NewsStandApplication.getInstance().releaseFragmentComponent();
     }
 
     //region MVP

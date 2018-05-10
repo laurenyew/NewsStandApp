@@ -3,6 +3,7 @@ package laurenyew.newsstandapp.presenters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 
 import java.lang.ref.WeakReference;
@@ -24,7 +25,8 @@ public class ArticleDetailPresenter implements ArticleDetailContract.Presenter {
     private String mWebUrl = null;
 
     //region Getters
-    private ArticleDetailContract.View getView() {
+    @VisibleForTesting
+    ArticleDetailContract.View getView() {
         return mViewRef != null ? mViewRef.get() : null;
     }
     //endregion
@@ -55,7 +57,7 @@ public class ArticleDetailPresenter implements ArticleDetailContract.Presenter {
      */
     @Override
     public void onShare() {
-        Context context = NewsStandApplication.getInstance().getApplicationContext();
+        Context context = NewsStandApplication.getInstance().getAppComponent().getContext();
         if (context != null) {
             StringBuilder bodyBuilder = new StringBuilder();
             if (!TextUtils.isEmpty(mDescription)) {
@@ -83,7 +85,7 @@ public class ArticleDetailPresenter implements ArticleDetailContract.Presenter {
      */
     @Override
     public void onOpenWebsite() {
-        Context context = NewsStandApplication.getInstance().getApplicationContext();
+        Context context = NewsStandApplication.getInstance().getAppComponent().getContext();
         if (context != null) {
             try {
                 Uri uri = Uri.parse(mWebUrl);

@@ -1,4 +1,6 @@
-package laurenyew.newsstandapp.di;
+package laurenyew.newsstandapp.di.modules;
+
+import android.support.annotation.VisibleForTesting;
 
 import com.squareup.moshi.Moshi;
 
@@ -25,7 +27,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 public class NetworkModule {
     private Retrofit mRetrofit;
     private Moshi mMoshi = new Moshi.Builder().build();
-    private OkHttpClient.Builder mOkHttpClient;
+    @VisibleForTesting
+    public OkHttpClient.Builder mOkHttpClient;
 
     public NetworkModule() {
         mOkHttpClient = setupOkHttp();
@@ -53,6 +56,8 @@ public class NetworkModule {
         httpClientBuilder.connectTimeout(2, TimeUnit.MINUTES)
                 .writeTimeout(2, TimeUnit.MINUTES)
                 .readTimeout(2, TimeUnit.MINUTES);
+
+        //Add logging
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         httpClientBuilder.addInterceptor(httpLoggingInterceptor);

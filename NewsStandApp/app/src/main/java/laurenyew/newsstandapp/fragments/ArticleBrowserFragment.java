@@ -92,8 +92,9 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        //Dagger setup
+        mPresenter = NewsStandApplication.getInstance().addFragmentComponent().getArticleBrowserPresenter();
 
-        mPresenter = NewsStandApplication.getInstance().getAppComponent().getArticleBrowserPresenter();
     }
 
     @Nullable
@@ -172,6 +173,8 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
     public void onDestroy() {
         super.onDestroy();
         mPresenter = null;
+        //Release Fragment Component
+        NewsStandApplication.getInstance().releaseFragmentComponent();
     }
 
     @Override
@@ -285,8 +288,8 @@ public class ArticleBrowserFragment extends Fragment implements ArticleBrowserCo
         if (isAdded() && isVisible()) {
             if (mIsRunningTwoPaneMode && mArticleDetailContainer != null) {
                 ArticleDetailContract.View detailView = ArticleDetailFragment.newInstance(itemImageUrl, itemTitle, itemDescription, itemWebUrl);
-                AppCompatActivity activity = (AppCompatActivity) getActivity();
-                FragmentManager supportFragmentManger = activity != null ? activity.getSupportFragmentManager() : null;
+                Activity activity = getActivity();
+                FragmentManager supportFragmentManger = activity != null && activity instanceof AppCompatActivity ? ((AppCompatActivity) activity).getSupportFragmentManager() : null;
                 if (supportFragmentManger != null) {
                     supportFragmentManger.beginTransaction()
                             .replace(R.id.articleDetailContainer, (Fragment) detailView)

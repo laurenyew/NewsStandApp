@@ -3,6 +3,7 @@ package laurenyew.newsstandapp.presenters;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 
 import java.lang.ref.WeakReference;
@@ -49,7 +50,8 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
     private BiFunction<Integer, String, Object> onFailureFunction = (errorCode, message) -> onLoadArticlesFailure(errorCode, message);
 
     //region Getters
-    private ArticleBrowserContract.View getView() {
+    @VisibleForTesting
+    public ArticleBrowserContract.View getView() {
         return mViewRef != null ? mViewRef.get() : null;
     }
     //endregion
@@ -57,7 +59,7 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
     @Override
     public void onBind(ArticleBrowserContract.View view) {
         mViewRef = new WeakReference<>(view);
-        Context context = NewsStandApplication.getInstance().getApplicationContext();
+        Context context = NewsStandApplication.getInstance().getAppComponent().getContext();
         mApiKey = context != null ? context.getString(R.string.api_key) : null;
         mDefaultTitle = context != null ? context.getString(R.string.article_title_unknown) : "";
     }
@@ -74,6 +76,7 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
         }
 
         mData.clear();
+        mPreviewData.clear();
 
         mSearchTerm = null;
         mApiKey = null;
@@ -150,7 +153,7 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
      * TODO: Might consider making the articleData into POJOs for space reasons, or integrating ROOM instead
      * of keeping the data cached here
      */
-    protected Object onLoadArticlesSuccess(List<ArticleData> data, Integer requestedPage) {
+    protected Object onLoadArticlesSuccess(List<ArticleData> data, int requestedPage) {
         ArticleBrowserContract.View view = getView();
         if (view != null) {
             mCurrentPageNum = requestedPage;
@@ -166,7 +169,7 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
             for (ArticleData article : data) {
                 //Don't allow empty titles, either use description or default title
                 if (TextUtils.isEmpty(article.title)) {
-                    article.title = TextUtils.isEmpty(article.description) ? article.description : mDefaultTitle;
+                    article.title = !TextUtils.isEmpty(article.description) ? article.description : mDefaultTitle;
                 }
                 //Fill in the data
                 mData.put(article.id, article);
@@ -186,7 +189,7 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
      */
     protected Object onLoadArticlesFailure(int errorCode, String message) {
         ArticleBrowserContract.View view = getView();
-        Context context = NewsStandApplication.getInstance().getApplicationContext();
+        Context context = NewsStandApplication.getInstance().getAppComponent().getContext();
         if (view != null && context != null) {
             //Tell the view to stop loading
             view.onArticlesLoaded(mPreviewData);
@@ -233,7 +236,7 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
      */
     protected boolean checkIfInternetIsAvailable() {
         boolean isInternetConnected = false;
-        Context context = NewsStandApplication.getInstance().getApplicationContext();
+        Context context = NewsStandApplication.getInstance().getAppComponent().getContext();
         if (context != null) {
             isInternetConnected = isNetworkAvailable(context);
         }
@@ -255,6 +258,33 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
     private boolean isNetworkAvailable(Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+    }
+    //endregion
+
+    //region Testing Methods
+    @VisibleForTesting
+    public String getApiKey() {
+        return mApiKey;
+    }
+
+    @VisibleForTesting
+    public String getDefaultTitle() {
+        return mDefaultTitle;
+    }
+
+    @VisibleForTesting
+    public AsyncJobCommand getCommand() {
+        return mCommand;
+    }
+
+    @VisibleForTesting
+    public int getCurrentPageNum() {
+        return mCurrentPageNum;
+    }
+
+    @VisibleForTesting
+    public String getSearchTerm() {
+        return mSearchTerm;
     }
     //endregion
 }
