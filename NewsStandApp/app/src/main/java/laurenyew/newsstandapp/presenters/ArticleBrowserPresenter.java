@@ -122,7 +122,7 @@ public class ArticleBrowserPresenter implements ArticleBrowserContract.Presenter
         //Before making any new commands, check if network is available
         if (checkIfInternetIsAvailable()) {
             int nextPageNum = mCurrentPageNum + 1;
-            //load the images async for next page
+            //load the data async for next page
             if (mApiKey != null) {
                 mCommand = new SearchArticlesCommand(mApiKey, mSearchTerm, nextPageNum,
                         onSuccessFunction, onFailureFunction);
