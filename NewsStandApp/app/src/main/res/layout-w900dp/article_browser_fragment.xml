@@ -8,7 +8,7 @@
     android:showDividers="middle">
 
     <!--
-    This layout is a two-pane layout for the imageDetails
+    This layout is a two-pane layout for the articleDetails
     master/detail flow.
     -->
     <android.support.v4.widget.SwipeRefreshLayout

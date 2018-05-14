@@ -35,10 +35,10 @@ public class ArticlePreviewDiffCallback extends DiffUtil.Callback {
         ArticlePreviewDataWrapper oldItem = mOldData != null ? mOldData.get(oldItemPosition) : null;
         ArticlePreviewDataWrapper newItem = mNewData != null ? mNewData.get(newItemPosition) : null;
 
-        String oldId = oldItem != null ? oldItem.id : null;
-        String newId = newItem != null ? newItem.id : null;
+        String oldId = oldItem != null ? oldItem.id : "";
+        String newId = newItem != null ? newItem.id : "";
 
-        return oldId == newId;
+        return oldId.equals(newId);
     }
 
     @Override
